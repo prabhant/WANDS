@@ -1,8 +1,8 @@
 import pandas as pd
 #Read the data
 products_df = pd.read_csv('dataset/product.csv' , delimiter='\t')
-labels_df = pd.read_csv('WANDS/dataset/label.csv', delimiter='\t')
-queries_df = pd.read_csv('WANDS/dataset/query.csv', delimiter='\t')
+labels_df = pd.read_csv('dataset/label.csv', delimiter='\t')
+queries_df = pd.read_csv('dataset/query.csv', delimiter='\t')
 #Add a score in the labels dataframe when label is 'Exact' score is 1 when label is 'Partial' score is 0.5 when label is 'Irrelevant' score is 0
 labels_df['score'] = labels_df['label'].apply(lambda x: 1 if x == 'Exact' else 0.5 if x == 'Partial' else 0)
 
