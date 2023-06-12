@@ -18,4 +18,26 @@ model = SentenceTransformer('all-MiniLM-L12-v2')
 
 encodings_st = model.encode(list(product_emb_df['product_description']))
 
+import numpy as np
+import faiss
+class FaissIdx:
+    def __init__(self, model, dim=384):
+        self.index = faiss.IndexFlatIP(dim)
+        # Maintaining the document data
+        self.doc_map = dict()
+        self.model = model
+        self.ctr = 0
+
+    def add_doc(self, document_text):
+        self.index.add(np.reshape(self.model.encode(document_text),(1,384)))
+        self.doc_map[self.ctr] = document_text # store the original document text
+        self.ctr += 1
+
+    def search_doc(self, query, k=3):
+        D, I = self.index.search(self.model.get_embedding(query), k)
+        return [{self.doc_map[idx]: score} for idx, score in zip(I[0], D[0]) if idx in self.doc_map]
+
+faiss_idx = FaissIdx(model)
+for doc in list(product_emb_df['product_description']):
+    faiss_idx.add_doc(doc)
 
