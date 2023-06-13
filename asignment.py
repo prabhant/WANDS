@@ -40,8 +40,8 @@ model = SentenceTransformer('all-MiniLM-L12-v2')
 encodings_st = model.encode(list(product_emb_df['product_description']))
 #Defining the FAISS index
 index = FaissIdx(model)
-for i in range(len(list(product_emb_df['product_description'][:1000]))):
-  prod_id, prod_doc = product_emb_df['product_id'][:1000].iloc[i], product_emb_df['product_description'][:1000].iloc[i]
+for i in range(len(list(product_emb_df['product_description']))):
+  prod_id, prod_doc = product_emb_df['product_id'].iloc[i], product_emb_df['product_description'].iloc[i]
   index.add_doc(prod_doc, prod_id)
 
 #scoring the model based on the label score and the product id returned by the FAISS index for the query
@@ -53,7 +53,8 @@ for i in range(len(list(queries_df['query']))):
     for key, value in result.items():
       print(key, value)
       print(labels_df[labels_df['product_id'] == key[1]]['score'].iloc[0])
-      total_score += labels_df[labels_df['product_id'] == key[1]]['score'].iloc[0]
+      score = labels_df[labels_df['product_id'] == key[1]]['score'].iloc[0]
+      total_score += score
       print('\n')
-#calculating the average score
+#calculating the score
 print(total_score)
